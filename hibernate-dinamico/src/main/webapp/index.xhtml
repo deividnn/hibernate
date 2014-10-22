@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Gerenciar Cao - Hibernate Dinamico</title>
+    </h:head>
+    <h:body>
+
+
+        <h:form id="form">
+            <p:growl id="growl"/>
+            <p:focus context="form"/>
+
+            <p:panelGrid columns="2">
+
+                <p:outputLabel value="Codigo do Cao"
+                               rendered="#{caoBean.cao.id ne null}"/>
+                <p:inputText value="#{caoBean.cao.id}"
+                             disabled="true"
+                             rendered="#{caoBean.cao.id ne null}"
+                             />
+
+                <p:outputLabel value="Nome do Cao" for="nome"/>
+                <p:inputText value="#{caoBean.cao.nome}"
+                             maxlength="32"
+                             required="true"
+                             label="nome"
+                             id="nome"/>
+
+                <p:commandButton value="salvar"
+                                 update="@form"
+                                 actionListener="#{caoBean.salvar()}"/>
+
+                <p:commandButton value="cancelar"
+                                 rendered="#{caoBean.cao.id ne null}"
+                                 immediate="true"
+                                 actionListener="#{caoBean.cancelar()}"
+                                 update="@form">
+                    <p:confirm header="Confirmação"
+                               message="Tem certeza?"
+                               icon="ui-icon-alert" />
+                </p:commandButton>                    
+
+            </p:panelGrid>
+
+            <p:dataTable value="#{caoBean.lista}" 
+                         var="cao"
+                         rows="5"
+                         paginator="true">
+
+                <p:column headerText="Codigo" sortBy="#{cao.id}">
+                    <h:outputText value="#{cao.id}"/>
+                </p:column>
+
+                <p:column headerText="Nome" sortBy="#{cao.nome}">
+                    <h:outputText value="#{cao.nome}"/>
+                </p:column>
+
+                <p:column headerText="Ações" >
+                    <p:commandButton value="excluir"
+                                     immediate="true"
+                                     actionListener="#{caoBean.excluir(cao)}"
+                                     update="@form">
+                        <p:confirm header="Confirmação"
+                                   message="Tem certeza?"
+                                   icon="ui-icon-alert" />
+                    </p:commandButton>
+                    <p:commandButton value="editar"
+                                     immediate="true"
+                                     actionListener="#{caoBean.editar(cao)}"
+                                     update="@form"/>                    
+                </p:column>
+
+            </p:dataTable>
+
+            <p:confirmDialog global="true">
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+
+        </h:form>
+
+    </h:body>
+</html>
+

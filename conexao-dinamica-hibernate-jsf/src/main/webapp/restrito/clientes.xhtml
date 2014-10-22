@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Clientes</title>
+    </h:head>
+    <h:body>
+
+        <h:form id="form">
+            Logado como: #{session.getAttribute('usuarioLogado').usuario} 
+            - banco: #{session.getAttribute('conexao').banco}
+
+            <h:commandLink actionListener="#{conexaoBean.logout()}"
+                           onclick="if (!confirm('certeza?'))
+                                       return false"
+                           immediate="true"
+                           value="Sair"/>
+            <br/>
+            <h:link outcome="usuarios"
+                    value="Gerenciar Usuarios"/>
+            <p:growl/>
+            <p:focus context="form"/>
+
+            <p:panelGrid columns="2">
+
+                <p:outputLabel value="Codigo" rendered="#{clienteBean.cliente.id ne null}"/>
+                <p:inputText maxlength="32"
+                             disabled="true"
+                             rendered="#{clienteBean.cliente.id ne null}"
+                             value="#{clienteBean.cliente.id}"/>
+
+                <p:outputLabel value="Cliente" for="nome"/>
+                <p:inputText maxlength="80"
+                             required="true"
+                             label="nome"
+                             id="nome"
+                             value="#{clienteBean.cliente.nome}"/>
+
+
+                <p:commandButton   value="salvar"
+                                 update="@form"
+                                 onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                 actionListener="#{clienteBean.salvar()}"/>
+
+                <p:commandButton   value="cancelar"
+                                 update="@form"
+                                 immediate="true"
+                                 rendered="#{clienteBean.cliente.id ne null}"
+                                 actionListener="#{clienteBean.cancelar()}"/>
+
+            </p:panelGrid>
+
+            <p:dataTable value="#{clienteBean.lista}"
+                         var="cliente" 
+                         emptyMessage="nenhum cliente"
+                         rows="10"
+                         paginator="true">
+
+                <p:column sortBy="#{cliente.id}" headerText="Codigo">
+                    <h:outputText value="#{cliente.id}"/>
+                </p:column>
+
+                <p:column sortBy="#{cliente.nome}" headerText="Nome">
+                    <h:outputText value="#{cliente.nome}"/>
+                </p:column>
+
+
+                <p:column  headerText="Ações">
+
+                    <p:commandButton   value="excluir"
+                                     onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                     immediate="true"
+                                     update="@form"
+                                     actionListener="#{clienteBean.excluir(cliente)}"
+                                     onclick="if (!confirm('certeza?'))
+                                                 return false"/>
+
+                    <p:commandButton   value="editar"
+                                     immediate="true"
+                                     update="@form"
+                                     actionListener="#{clienteBean.editar(cliente)}"
+                                     />
+
+                </p:column>
+
+            </p:dataTable>
+
+        </h:form>
+
+        <p:dialog modal="true" widgetVar="statusDialog" header="Status"   
+                  draggable="false" closable="true">  
+            Processando...
+        </p:dialog>
+
+    </h:body>
+
+</html>
+

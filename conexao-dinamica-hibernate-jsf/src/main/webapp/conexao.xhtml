@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Conectar Servidor</title>
+    </h:head>
+    <h:body>
+
+        <h:form id="principal">
+
+
+
+
+        </h:form>
+
+        <p:dialog widgetVar="conexao"
+                  closable="false"
+                  closeOnEscape="false"
+                  width="450"
+                  height="200"
+                  modal="true"
+                  draggable="false"
+                  visible="true"
+                  header="Acesso ao sistema">
+
+            <h:form id="form">
+                <p:growl id="growl"/>
+                <p:focus context="form" id="focus"/>
+
+                <p:panelGrid columns="2">
+
+
+                    <p:outputLabel value="Banco de Dados:" for="banco"/>
+                    <p:inputText value="#{conexaoBean.conexao.banco}" 
+                                 required="true"
+                                 label="banco"
+                                 id="banco"/>
+
+                    <p:outputLabel value="Usuario:" for="usuario"/>
+                    <p:inputText value="#{conexaoBean.usuarioLogin.usuario}" 
+                                 required="true"
+                                 label="usuario"
+                                 id="usuario"/>
+
+                    <p:outputLabel value="Senha:" for="senha"/>
+                    <p:password value="#{conexaoBean.usuarioLogin.senha}" 
+                                required="true"
+                                label="senha"
+                                id="senha"/>
+
+                    <p:commandButton value="Conectar"
+                                     update=":form:growl :form:focus :principal"
+                                     action="#{conexaoBean.conectarBancoDeDados()}"
+                                     onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
+
+
+
+                </p:panelGrid>
+
+
+
+            </h:form>
+        </p:dialog>
+
+
+        <p:dialog modal="true" widgetVar="statusDialog" header="Status"   
+                  draggable="false" closable="true">  
+            Conectando...
+        </p:dialog> 
+
+    </h:body>
+</html>
+

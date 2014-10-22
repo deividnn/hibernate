@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Usuarios</title>
+    </h:head>
+    <h:body>
+
+        <h:form id="form">
+            Logado como: #{session.getAttribute('usuarioLogado').usuario} 
+            - banco: #{session.getAttribute('conexao').banco}
+
+            <h:commandLink actionListener="#{conexaoBean.logout()}"
+                           onclick="if (!confirm('certeza?'))
+                                       return false"
+                           immediate="true"
+                           value="Sair"/>
+            <br/>
+            <h:link outcome="clientes"
+                    value="Gerenciar Clientes"/>
+            <p:growl/>
+            <p:focus context="form"/>
+
+            <p:panelGrid columns="2">
+
+                <p:outputLabel value="Codigo" rendered="#{usuarioBean.usuario.id ne null}"/>
+                <p:inputText maxlength="32"
+                             disabled="true"
+                             rendered="#{usuarioBean.usuario.id ne null}"
+                             value="#{usuarioBean.usuario.id}"/>
+
+                <p:outputLabel value="Usuario" for="usuario"/>
+                <p:inputText maxlength="32"
+                             required="true"
+                             label="usuario"
+                             id="usuario"
+                             value="#{usuarioBean.usuario.usuario}"/>
+
+                <p:outputLabel value="Senha" for="senha"/>
+                <p:password maxlength="32"
+                            required="true"
+                            label="senha"
+                            id="senha"
+                            value="#{usuarioBean.usuario.senha}"/>
+
+                <p:outputLabel value="Status" for="status"/>
+                <p:selectOneMenu value="#{usuarioBean.usuario.ativo}"
+                                 required="true"
+                                 id="status" >
+                    <f:selectItem itemLabel="selecione" itemValue=""/>
+                    <f:selectItem itemLabel="Liberado" itemValue="true"/>
+                    <f:selectItem itemLabel="Bloqueado" itemValue="false"/>
+                </p:selectOneMenu>
+
+                <p:commandButton   value="salvar"
+                                 update="@form"
+                                 onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                 actionListener="#{usuarioBean.salvar()}"/>
+
+                <p:commandButton   value="cancelar"
+                                 update="@form"
+                                 immediate="true"
+                                 rendered="#{usuarioBean.usuario.id ne null}"
+                                 actionListener="#{usuarioBean.cancelar()}"/>
+
+            </p:panelGrid>
+
+            <p:dataTable value="#{usuarioBean.lista}"
+                         var="usuario" 
+                         emptyMessage="nenhum usuario"
+                         rows="10"
+                         paginator="true">
+
+                <p:column sortBy="#{usuario.id}" headerText="Codigo">
+                    <h:outputText value="#{usuario.id}"/>
+                </p:column>
+
+                <p:column sortBy="#{usuario.usuario}" headerText="Usuario">
+                    <h:outputText value="#{usuario.usuario}"/>
+                </p:column>
+
+                <p:column sortBy="#{usuario.ativo}" headerText="Status">
+                    <h:outputText value="#{usuario.ativo}"/>
+                </p:column>
+
+                <p:column  headerText="Ações">
+
+                    <p:commandButton   value="excluir"
+                                     onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                     immediate="true"
+                                     update="@form"
+                                     actionListener="#{usuarioBean.excluir(usuario)}"
+                                     onclick="if (!confirm('certeza?'))
+                                                 return false"/>
+
+                    <p:commandButton   value="editar"
+                                     immediate="true"
+                                     update="@form"
+                                     actionListener="#{usuarioBean.editar(usuario)}"
+                                     />
+
+                </p:column>
+
+            </p:dataTable>
+
+        </h:form>
+
+        <p:dialog modal="true" widgetVar="statusDialog" header="Status"   
+                  draggable="false" closable="true">  
+            Processando...
+        </p:dialog>
+
+    </h:body>
+
+</html>
+
